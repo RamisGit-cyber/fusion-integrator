@@ -36,7 +36,15 @@ JWT_RE = re.compile(r"eyJ[\w-]{10,}(\.[\w-]+){0,2}")
 SECRET_PATTERNS = (JWT_RE, re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
                    re.compile(r"\bAKIA[0-9A-Z]{16}\b"), re.compile(r"\bgh[pousr]_[A-Za-z0-9]{20,}"),
                    re.compile(r"\bsk-[A-Za-z0-9_-]{20,}"))
-DAILY_CHAT_LIMIT = 100
+def _daily_limit():
+    """Суточный предел тест-сообщений на клиента. По умолчанию 500, меняется переменной FUSION_DAILY_CHAT_LIMIT."""
+    try:
+        return max(1, int(os.environ.get("FUSION_DAILY_CHAT_LIMIT", "500")))
+    except ValueError:
+        return 500
+
+
+DAILY_CHAT_LIMIT = _daily_limit()
 # Имена персон, которые Fusion запретила. Собрано из частей, чтобы слово не светилось в тексте проекта.
 FORBIDDEN_NAMES = ("Айг" + "ерим",)
 REQUEST_TIMEOUT = 30
@@ -130,6 +138,8 @@ def _is_inside(path, folder):
 
 def _check_user_path(path):
     real = os.path.realpath(path)
+    if os.path.realpath(os.getcwd()) in (os.path.realpath(os.path.expanduser("~")), os.path.abspath(os.sep)):
+        raise FusionError("Запусти Claude Code из папки проекта клиента, а не из домашней папки: файлы читаются только внутри текущей папки.")
     if not _is_inside(real, os.getcwd()):
         raise FusionError("Файлы можно читать и писать только внутри текущей папки проекта: " + path)
     if _is_inside(real, CONFIG_DIR):

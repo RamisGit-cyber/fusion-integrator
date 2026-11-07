@@ -10,8 +10,8 @@ import fusion_lib as lib
 KB_EXTENSIONS = (".md", ".txt", ".pdf", ".docx", ".xlsx")
 KB_MAX_BYTES = 20 * 1024 * 1024
 SERVICE_MARKERS = ("# version", "парный файл", "служебн", "здесь только справка", "для промпта")
-CHAT_DEFAULT_MAX = 10
-CHAT_HARD_CAP = 40
+CHAT_DEFAULT_MAX = 40
+CHAT_HARD_CAP = 300
 CHAT_POLL_SECONDS = 3
 CHAT_POLL_ROUNDS = 40
 
@@ -151,5 +151,5 @@ def reserve_daily_budget(client, count):
         used = record.get("count", 0) if record.get("day") == today else 0
     if used + count > lib.DAILY_CHAT_LIMIT:
         raise lib.FusionError(f"Суточный предел тест-сообщений {lib.DAILY_CHAT_LIMIT}: уже {used}, ещё {count} нельзя. "
-                              "Нужно больше: скажи человеку, пусть решает сам.")
+                              "Нужно больше: задай FUSION_DAILY_CHAT_LIMIT или продолжи завтра.")
     lib.write_private_file(path, json.dumps({"day": today, "count": used + count}))

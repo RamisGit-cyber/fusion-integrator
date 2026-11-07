@@ -7,6 +7,7 @@
 """
 
 import os
+import shlex
 import shutil
 import stat
 import sys
@@ -22,7 +23,11 @@ def main():
         os.chmod(os.path.dirname(TARGET), 0o700)
         os.chmod(TARGET, 0o700)
     for name in FILES:
-        shutil.copyfile(os.path.join(HERE, name), os.path.join(TARGET, name))
+        target_file = os.path.join(TARGET, name)
+        if os.path.exists(target_file):
+            os.chmod(target_file, 0o644)
+        shutil.copyfile(os.path.join(HERE, name), target_file)
+        os.chmod(target_file, 0o444)
     login = os.path.join(TARGET, "fusion_login.py")
     if os.name == "nt":
         shim = os.path.join(TARGET, "fusion-login.cmd")
@@ -33,8 +38,10 @@ def main():
     bin_dir = os.path.join(os.path.expanduser("~"), ".local", "bin")
     os.makedirs(bin_dir, exist_ok=True)
     shim = os.path.join(bin_dir, "fusion-login")
+    if os.path.islink(shim):
+        os.remove(shim)
     with open(shim, "w", encoding="utf-8") as handle:
-        handle.write(f'#!/bin/sh\nexec python3 -I "{login}" "$@"\n')
+        handle.write(f'#!/bin/sh\nexec python3 -I {shlex.quote(login)} "$@"\n')
     os.chmod(shim, os.stat(shim).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     print(f"Готово. Команда: {shim}")
     if bin_dir not in os.environ.get("PATH", "").split(os.pathsep):

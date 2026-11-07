@@ -11,7 +11,7 @@
 | `agents create` | `POST /agents`, затем `PATCH /agents/{id}` | температура 0,2, часовой пояс, голос и фото включены; каналы не подключены |
 | `agents clone` | `POST /agents/{id}/clone` | перед этим бэкап |
 | `agents set` | `PATCH /agents/{id}` | температура, задержка ответа, часовой пояс, голос, фото |
-| `agents active on/off` | `PATCH /agents/{id}` (`is_active`) | включать только после регресса и «ок»; для `on` нужен `--confirm-live` |
+| `agents active on/off` | `PATCH /agents/{id}` (`is_active`) | включать после регресса; для `on` нужен `--confirm-live` (Claude ставит его сам) |
 | `agents delete` | `DELETE /agents/{id}` | только имена, начинающиеся на «ТЕСТ интегратор-плагин» |
 | `backup` / `backups` / `restore` | чтение: агент, дожимки, поля заявки, документы; откат: `PATCH /agents/{id}`, `PUT /agents/{id}/follow-ups`, `PATCH /threads/configure/{user_id}/{id}` | файлы в `~/.config/fusion-integrator/backups/<клиент>/<агент>/` |
 | `prompt pull` | `GET /agents/{id}` | |
@@ -26,7 +26,7 @@
 | `notify confirm` | `POST /telegram-notifications/agents/{id}/groups/confirm` (`code`) | |
 | `notify status` | `GET …/recipients`, `GET …/settings` | |
 | `channels` | `GET /messenger-connections/{канал}/{id}/connection` | только чтение |
-| `chat` | `POST /agents/{id}/test-chat/share-link`, `POST` и `GET /public/agent-test-chat/{token}/messages`, `DELETE …/share-link` | лимит `--max` (по умолчанию 10, потолок 40), `--confirm-spend` обязателен, суточный предел 100 сообщений на клиента |
+| `chat` | `POST /agents/{id}/test-chat/share-link`, `POST` и `GET /public/agent-test-chat/{token}/messages`, `DELETE …/share-link` | лимит `--max` (по умолчанию 40, потолок 300), `--confirm-spend` обязателен (Claude ставит сам), суточный предел 500 сообщений на клиента (`FUSION_DAILY_CHAT_LIMIT`) |
 
 Коды выхода: 0 — успех, 1 — понятная ошибка (текст без секретов), остальное — неожиданный сбой.
 
