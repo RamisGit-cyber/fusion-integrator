@@ -4,7 +4,7 @@
 
 | Команда | Эндпоинт платформы | Заметки |
 |---|---|---|
-| вход (`fusion_login.py`) | `POST /auth/login` (форма `username`, `password`), `POST /auth/refresh` | сохраняется только токен, права 600 |
+| вход (`fusion_login.py`, форма на 127.0.0.1 или `--terminal`) | `POST /auth/login` (форма `username`, `password`), `POST /auth/refresh` | сохраняется только токен, права 600 |
 | `account` | `GET /subscriptions/my/messages` | лимит, использовано, осталось |
 | `agents list` | `GET /agents/my` | |
 | `agents show` | `GET /agents/{id}` | |

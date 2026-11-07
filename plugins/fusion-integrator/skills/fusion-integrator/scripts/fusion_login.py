@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Вход в кабинет клиента Fusion. Пароль вводится ТОЛЬКО скрытым вводом с клавиатуры.
+"""Вход в кабинет клиента Fusion. Пароль вводится ТОЛЬКО скрыто: в форме в браузере или в Терминале.
 
-    fusion-login <имя-клиента>            войти (спросит почту и пароль)
+    fusion-login <имя-клиента>            войти (без клавиатуры открывается форма в браузере, в Терминале спросит там)
+    fusion-login <имя-клиента> --form     войти через скрытую форму в браузере (на этом компьютере, адрес 127.0.0.1)
+    fusion-login <имя-клиента> --terminal войти скрытым вводом в Терминале (запасной путь)
     fusion-login <имя-клиента> --status   показать, жива ли сессия
     fusion-login <имя-клиента> --logout   удалить сохранённую сессию
 
@@ -9,8 +11,8 @@
 ~/.config/fusion-integrator/<имя>.json (права 600) и сразу забывает пароль.
 Пароль и токены не печатаются и в логи не пишутся.
 
-Запускать нужно в обычном окне Терминала, не внутри чата Claude: скрипт читает
-ввод напрямую с клавиатуры (/dev/tty) и откажется работать, если клавиатуры нет.
+Форма: команда ждёт, пока человек войдёт (до 10 минут), потом сама закрывается.
+Терминальный путь читает ввод напрямую с клавиатуры (/dev/tty) и без неё откажется работать.
 """
 
 import os
@@ -18,6 +20,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import fusion_lib as lib  # noqa: E402
+import fusion_loginform as loginform  # noqa: E402
 
 
 def read_hidden(prompt, echo):
@@ -35,8 +38,8 @@ def read_hidden(prompt, echo):
             raise OSError("процесс не на переднем плане терминала")
     except (OSError, ImportError):
         raise lib.FusionError(
-            "Нет настоящего терминала с клавиатурой (запуск из чата, канала или фона). Запусти fusion-login "
-            "в отдельном окне Терминала, а не внутри Claude: пароль не должен проходить через чат."
+            "Нет настоящего терминала с клавиатурой (запуск из чата, канала или фона). Используй форму "
+            "в браузере (--form) или запусти fusion-login --terminal в окне Терминала: пароль не должен проходить через чат."
         ) from None
     with tty_in, tty_out:
         tty_out.write(prompt)
@@ -55,6 +58,10 @@ def read_hidden(prompt, echo):
                 tty_out.write("\n")
                 tty_out.flush()
     return line.rstrip("\r\n")
+
+
+def has_keyboard():
+    return sys.stdin.isatty() and sys.stdout.isatty() and sys.stderr.isatty()
 
 
 def do_login(client):
@@ -101,10 +108,13 @@ def main(argv):
         print(__doc__)
         return 0
     client = lib.validate_client(argv[0])
-    if "--status" in argv[1:]:
+    flags = argv[1:]
+    if "--status" in flags:
         print_status(client)
-    elif "--logout" in argv[1:]:
+    elif "--logout" in flags:
         do_logout(client)
+    elif "--form" in flags or ("--terminal" not in flags and not has_keyboard()):
+        loginform.run_form_login(client)
     else:
         do_login(client)
     return 0
