@@ -8,6 +8,7 @@
     {
       "name": "fusion-integrator",
       "source": "./plugins/fusion-integrator",
+      "version": "1.0.1",
       "description": "Собирает и настраивает ИИ-агентов клиентов на платформе fusion-ai.app по методологии Fusion"
     }
   ]

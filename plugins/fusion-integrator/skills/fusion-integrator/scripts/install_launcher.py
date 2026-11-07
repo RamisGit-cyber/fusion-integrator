@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ставит команду fusion-login, чтобы человек мог войти в кабинет клиента из обычного Терминала.
+"""Ставит команду fusion-login, чтобы человек мог войти в кабинет клиента из Терминала (запасной путь; основной вход идёт через форму в браузере).
 
 Копирует скрипты в ~/.config/fusion-integrator/bin (чтобы путь не зависел от версии плагина)
 и кладёт короткую команду fusion-login в ~/.local/bin (Mac, Linux) или в ту же папку bin (Windows).
@@ -13,7 +13,7 @@ import stat
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-FILES = ("fusion_lib.py", "fusion_login.py")
+FILES = ("fusion_lib.py", "fusion_login.py", "fusion_loginform.py")
 TARGET = os.path.join(os.path.expanduser("~"), ".config", "fusion-integrator", "bin")
 
 

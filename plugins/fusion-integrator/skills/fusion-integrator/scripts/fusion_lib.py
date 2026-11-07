@@ -178,8 +178,8 @@ def load_session(client):
     path = session_path(client)
     if not os.path.exists(path):
         raise FusionError(
-            f"Для клиента «{client}» нет входа. Попроси человека открыть обычный Терминал "
-            f"и выполнить: fusion-login {client}"
+            f"Для клиента «{client}» нет входа. Войди: python3 fusion_login.py {client} "
+            f"(откроется форма входа в браузере; запасной путь: --terminal в Терминале)"
         )
     if os.name != "nt" and (os.stat(path).st_mode & 0o077 or os.stat(path).st_uid != os.getuid()):
         raise FusionError(f"У файла сессии слишком открытые права: {path}. Выполни chmod 600 на него.")
@@ -241,6 +241,10 @@ def raw_request(method, path, *, token=None, body=None, content_type=None, timeo
         raise FusionError(f"Не достучались до fusion-ai.app ({method} {path}): {reason}") from None
 
 
+class LoginRejected(FusionError):
+    """Платформа ответила, что почта или пароль не подходят."""
+
+
 def login_request(username, password):
     """Вход по почте и паролю. Вызывается только из fusion_login.py."""
     form = urllib.parse.urlencode({"username": username.lower(), "password": password}).encode()
@@ -249,7 +253,7 @@ def login_request(username, password):
                               content_type="application/x-www-form-urlencoded", secrets=[password])
     except FusionError as error:
         if " 400 " in str(error) or " 401 " in str(error) or " 422 " in str(error):
-            raise FusionError("Платформа не приняла почту или пароль. Проверь раскладку и язык ввода.") from None
+            raise LoginRejected("Платформа не приняла почту или пароль. Проверь раскладку и язык ввода.") from None
         raise FusionError(_scrub(str(error), [password])) from None
     return json.loads(data)
 
@@ -277,8 +281,8 @@ class Api:
         if seconds_left(token) > 0:
             return token
         raise FusionError(
-            f"Сессия клиента «{self.client}» истекла. Попроси человека выполнить в Терминале: "
-            f"fusion-login {self.client}"
+            f"Сессия клиента «{self.client}» истекла. Попроси человека войти заново: "
+            f"запусти fusion_login.py {self.client} (откроется форма в браузере)"
         )
 
     def call(self, method, path, payload=None, timeout=REQUEST_TIMEOUT):
