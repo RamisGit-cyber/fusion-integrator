@@ -1,0 +1,18 @@
+.DS_Store
+node_modules/
+# секреты
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+# сессии и бэкапы клиентов живут в ~/.config/fusion-integrator и в проект не попадают
+session*.json
+*.session.json
+backups/
+__pycache__/
+*.pyc
+*.bak
+*.bak-*
+tools/leak-names.local.txt
+tools/sync-config.local.json

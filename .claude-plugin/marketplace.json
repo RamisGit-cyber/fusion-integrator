@@ -1,0 +1,14 @@
+{
+  "name": "fusion-integrator",
+  "description": "Fusion-интегратор — для партнёров Fusion AI",
+  "owner": {
+    "name": "Fusion AI"
+  },
+  "plugins": [
+    {
+      "name": "fusion-integrator",
+      "source": "./plugins/fusion-integrator",
+      "description": "Собирает и настраивает ИИ-агентов клиентов на платформе fusion-ai.app по методологии Fusion"
+    }
+  ]
+}

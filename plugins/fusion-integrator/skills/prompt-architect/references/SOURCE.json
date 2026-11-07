@@ -1,0 +1,13 @@
+{
+ "about": "Копия получена скриптом tools/sync-methodology.py из единого источника методологии Fusion.",
+ "files": {
+  "architect-core.md": {
+   "source_sha256": "08270706f9b323f6e7a41b3e858f09728db4c512bb7dd17964730cdd7d23ea70",
+   "plugin_copy_sha256": "45243be3e3b164beede88799be128761944cf18bbe6136563bee281488abeaf9"
+  },
+  "lessons-checklist.md": {
+   "source_sha256": "822c956cd3e998ab413fcf2155364c9caeb41f3061df351cf33f41fa8c6ae473",
+   "plugin_copy_sha256": "7f8a59633d93b74ebc48de6c550428f33d39a67285b06d9f40d5d2c5a1419b6a"
+  }
+ }
+}

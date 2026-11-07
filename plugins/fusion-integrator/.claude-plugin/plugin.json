@@ -1,0 +1,10 @@
+{
+  "name": "fusion-integrator",
+  "version": "0.1.0",
+  "displayName": "Fusion-интегратор",
+  "description": "Собирает и настраивает ИИ-агентов клиентов на Fusion AI: знания о платформе, методология промптов, безопасный вход в кабинет, бэкап и регресс",
+  "author": {
+    "name": "Fusion AI"
+  },
+  "keywords": ["fusion", "ai-agents", "integrator", "russian"]
+}
