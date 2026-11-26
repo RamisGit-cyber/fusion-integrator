@@ -21,6 +21,8 @@
 | `kb upload` | `POST /documents/files/{id}` (multipart, поле `files`), опрос статуса | форматы md, txt, pdf, docx, xlsx, до 20 МБ; `--replace-id` удаляет старый документ после успешной загрузки нового |
 | `kb delete` | `DELETE /documents/{doc}?agent_id=` | |
 | `fields show` / `fields set` | `POST /threads/configure?agent_id=` (получить или создать), `PATCH /threads/configure/{user_id}/{agent_id}` | «Телефон» обязателен |
+| `assets list` / `upload` / `update` / `enable` | `GET`, `POST` (multipart: `file`, `title`, `description_for_ai`, `is_enabled`, `default_caption`, `tags`), `PATCH`, `POST …/enable` на `/agents/{id}/assets[/{asset}]` | jpg, png, webp, gif, pdf до 15 МБ; прежняя запись сохраняется в бэкапы; удаления нет |
+| `sets list` / `create` / `update` / `enable` | `GET`, `POST`, `PATCH`, `POST …/enable` на `/agents/{id}/asset-collections[/{set}]` | до 10 файлов; набор создаётся выключенным; удаления нет |
 | `followups show` / `set` | `GET`, `PUT /agents/{id}/follow-ups` | |
 | `notify link` | `POST /telegram-notifications/agents/{id}/links/group` | |
 | `notify confirm` | `POST /telegram-notifications/agents/{id}/groups/confirm` (`code`) | |
