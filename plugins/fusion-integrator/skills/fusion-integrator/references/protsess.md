@@ -24,6 +24,7 @@
 2. `agents create --name "…" --prompt-file …` (агент создаётся без каналов).
 3. Факты в базу: `kb upload`. Файлы без служебных шапок. Дат и дней недели нет.
 4. `fields set` (Телефон обязателен), при нужде свои поля.
+   Файлы для отправки (если есть): `assets upload`, `sets create`, затем `sets enable`. Порядок и правила: `references/fayly-dlya-otpravki.md`.
 5. Дожимки: `followups set`.
 6. `agents set --temperature 0.2 --voice on --image on` (если нужны голос и фото).
 7. Уведомления: `notify link`, группа, код, `notify confirm`.

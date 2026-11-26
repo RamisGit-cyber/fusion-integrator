@@ -317,6 +317,22 @@ class Api:
         return json.loads(data) if data else {}
 
 
+def upload_form(api, path, fields, field, filename, content, content_type):
+    """Загрузка файла вместе с текстовыми полями формы (multipart). Имя файла очищается от кавычек и переводов строк."""
+    boundary = uuid.uuid4().hex
+    safe_name = re.sub(r'["\r\n\\]', "_", os.path.basename(filename))
+    safe_type = content_type if re.fullmatch(r"[a-z]+/[a-z0-9.+-]+", content_type or "") else "application/octet-stream"
+    parts = []
+    for key, value in fields.items():
+        parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="{key}"\r\n\r\n{value}\r\n'.encode())
+    parts.append((f'--{boundary}\r\nContent-Disposition: form-data; name="{field}"; filename="{safe_name}"\r\n'
+                  f'Content-Type: {safe_type}\r\n\r\n').encode() + content + b"\r\n")
+    parts.append(f"--{boundary}--\r\n".encode())
+    _, data = raw_request("POST", path, token=api._fresh_token(), body=b"".join(parts),
+                          content_type=f"multipart/form-data; boundary={boundary}", timeout=UPLOAD_TIMEOUT)
+    return json.loads(data) if data else {}
+
+
 def public_call(method, path, payload=None, timeout=REQUEST_TIMEOUT):
     """Запрос без токена (публичный тест-чат)."""
     body = json.dumps(payload).encode() if payload is not None else None

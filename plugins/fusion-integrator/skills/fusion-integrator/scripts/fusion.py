@@ -14,6 +14,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import fusion_assets as assets  # noqa: E402
 import fusion_kb_chat as kb  # noqa: E402
 import fusion_lib as lib  # noqa: E402
 import fusion_ops as ops  # noqa: E402
@@ -236,6 +237,40 @@ def cmd_account(api, args):
             f"осталось {data.get('remaining')}, подписка активна: {data.get('subscription_active')}")
 
 
+# ---------- файлы для отправки ----------
+
+def cmd_assets_list(api, args):
+    assets.list_assets(api, args.agent)
+
+
+def cmd_assets_upload(api, args):
+    assets.upload_asset(api, args.agent, args.file, args.title, args.when, args.caption, args.tags, args.live)
+
+
+def cmd_assets_update(api, args):
+    assets.update_asset(api, args.agent, args.asset, args.title, args.when)
+
+
+def cmd_assets_enable(api, args):
+    assets.enable_asset(api, args.agent, args.asset, args.state)
+
+
+def cmd_sets_list(api, args):
+    assets.list_sets(api, args.agent)
+
+
+def cmd_sets_create(api, args):
+    assets.create_set(api, args.agent, args.title, args.when, args.assets)
+
+
+def cmd_sets_update(api, args):
+    assets.update_set(api, args.agent, args.set, args.title, args.when, args.assets)
+
+
+def cmd_sets_enable(api, args):
+    assets.enable_set(api, args.agent, args.set, args.state)
+
+
 # ---------- тест-чат ----------
 
 def cmd_chat(api, args):
@@ -329,6 +364,28 @@ def build_parser():
     add("", "confirm", cmd_notify_confirm, "подтвердить группу кодом от бота", A, (("--code",), {"required": True}), parent=notify)
     add("", "status", cmd_notify_status, "кто получает уведомления", A, parent=notify)
 
+    media = groups.add_parser("assets", help="файлы для отправки (картинки, PDF)").add_subparsers(dest="command", required=True)
+    WHEN = (("--when",), {"help": "КОГДА AI отправляет: по этому тексту агент решает, что отправить"})
+    add("", "list", cmd_assets_list, "файлы агента", A, parent=media)
+    add("", "upload", cmd_assets_upload, "загрузить картинку или PDF с описанием «КОГДА AI отправляет»", A,
+        (("--file",), {"required": True}), (("--title",), {"required": True}), (("--when",), {"required": True}),
+        (("--caption",), {"help": "подпись по умолчанию"}), (("--tags",), {}),
+        (("--live",), {"action": "store_true", "help": "сразу включить файл (по умолчанию загружается выключенным)"}), parent=media)
+    add("", "update", cmd_assets_update, "поменять название или описание файла", A, (("--asset",), {"required": True}),
+        (("--title",), {}), WHEN, parent=media)
+    add("", "enable", cmd_assets_enable, "включить или выключить файл", A, (("--asset",), {"required": True}),
+        (("state",), {"choices": ("on", "off")}), parent=media)
+
+    sets = groups.add_parser("sets", help="наборы файлов (до 10 штук)").add_subparsers(dest="command", required=True)
+    add("", "list", cmd_sets_list, "наборы агента", A, parent=sets)
+    add("", "create", cmd_sets_create, "создать набор (создаётся ВЫКЛЮЧЕННЫМ)", A, (("--title",), {"required": True}),
+        (("--when",), {"required": True, "help": "КОГДА AI отправляет набор"}),
+        (("--assets",), {"required": True, "help": "id файлов через запятую, до 10"}), parent=sets)
+    add("", "update", cmd_sets_update, "поменять название, описание или состав набора", A, (("--set",), {"required": True}),
+        (("--title",), {}), WHEN, (("--assets",), {"help": "новый полный состав: id через запятую"}), parent=sets)
+    add("", "enable", cmd_sets_enable, "включить или выключить набор", A, (("--set",), {"required": True}),
+        (("state",), {"choices": ("on", "off")}), parent=sets)
+
     add("", "channels", cmd_channels, "какие каналы подключены (только чтение)", A, parent=groups)
     add("", "chat", cmd_chat, "тест-чат (тратит сообщения клиента)", A,
         (("--message",), {"action": "append"}), (("--scenario",), {}), (("--out",), {}),
@@ -339,7 +396,7 @@ def build_parser():
 
 def main(argv):
     args = build_parser().parse_args(argv)
-    for name in ("agent", "doc", "replace_id"):
+    for name in ("agent", "doc", "replace_id", "asset", "set"):
         if getattr(args, name, None):
             lib.validate_id(getattr(args, name), name)
     offline = args.handler is cmd_prompt_lint  # линтер работает без входа
