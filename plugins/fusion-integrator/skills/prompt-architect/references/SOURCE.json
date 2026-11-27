@@ -3,15 +3,15 @@
  "files": {
   "architect-core.md": {
    "source_sha256": "ca9345077a8ab62d820f8ec5c707b062bde5137546692fd3f22eda79c3da102d",
-   "plugin_copy_sha256": "97634a42587cef8a41d9b267ec748fd5b31e2105bea2a296888b6836d3c075f3"
+   "plugin_copy_sha256": "d4be64cae26f60f845154b758122bd6ae00c0efcbf4be28b2b22430ae0a3699f"
   },
   "lessons-checklist.md": {
    "source_sha256": "4377b1efd53158e6169a1deae6c07525a2f29437655ced2f8313a42325ba5690",
    "plugin_copy_sha256": "6142a810657c9771e8e4700487f24f99d854bcc37a17ecd20777dc917c5cc9d5"
   },
   "recept-test-agent-lida.md": {
-   "source_sha256": "78f61c278796e753680258cf6297d9740497b6b0fbea5dcc6d8a8bbaf798c321",
-   "plugin_copy_sha256": "9653ea76edc27cf03c92bf1f3bb558eed460725c748a5605f6fdc50240984c05"
+   "source_sha256": "e81c3184c65252b3310bae6bf3d4237629d2f624bc67d764a07aff1f896b7386",
+   "plugin_copy_sha256": "edee3ce71c1e04852fe2af8e8e4089c31d40e59b7119aea93e6d71454ec3f3cc"
   }
  }
 }
