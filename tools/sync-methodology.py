@@ -5,6 +5,7 @@
 lessons-checklist.md); путь и таблица замен в tools/sync-config.local.json. Здесь НЕ второй вариант методологии, а механическая копия:
 - текст ядра копируется как есть; меняются только несколько внутренних ссылок (таблица замен в конфиге);
 - в чек-листе убирается последний столбец «кейс» (там названия клиентов), сами правила не меняются;
+- рецепт «тестовый агент для лида» (recept-test-agent-lida.md) копируется как есть, только с проверкой на утечки;
 - архив уроков (lessons-archive.md) в плагин не входит: в нём данные клиентов.
 
 Запуск:
@@ -78,6 +79,11 @@ def transform_checklist(text):
     return head + separator + MARKER + body if separator else MARKER + text
 
 
+def transform_plain(text):
+    head, separator, body = text.partition("\n---\n")
+    return head + separator + MARKER + body if separator else MARKER + text
+
+
 def scan_leaks(name, text):
     problems = []
     for pattern, label in GENERIC_LEAKS:
@@ -95,7 +101,8 @@ def build(source_dir, replacements):
     outputs = {}
     sources = {}
     for name, transform in (("architect-core.md", lambda t: transform_core(t, replacements)),
-                            ("lessons-checklist.md", transform_checklist)):
+                            ("lessons-checklist.md", transform_checklist),
+                            ("recept-test-agent-lida.md", transform_plain)):
         path = os.path.join(source_dir, name)
         if not os.path.exists(path):
             raise SystemExit(f"Нет файла источника: {path}")
